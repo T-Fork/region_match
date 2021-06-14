@@ -1,2 +1,2 @@
 # region_match
-Match hospital with its region location.
+Match hospital with its corresponding region location.
