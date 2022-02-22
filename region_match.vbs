@@ -3,7 +3,7 @@
 ' Date: 2021 05 31
 ' Version: 0.2 added list of hospital/region as a sub-method instead of having it in a separate file. Not neat but simpler to maintain if changes need to be done.
 '
-' Comment: Jira UBB-325, Scrip to add location column to FreezerPro data exports based on a simple
+' Comment: Jira UBB-325, Script to add a location column to FreezerPro data exports based on a simple
 ' 		   check-file containing: Hospital name, Country, location/city
 '
 '
