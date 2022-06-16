@@ -1,5 +1,5 @@
 # region_match
-Script to a add location column to FreezerPro data exports based on a simple check-file containing: Hospital name, Country, location/city.
+Script to add a location column to FreezerPro data exports based on a simple check-file containing: Hospital name, Country, location/city.
 
 Code has been rewritten in Java, but I will however leave the VBscript-version.
 
