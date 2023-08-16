@@ -6,7 +6,6 @@ public class MatchedFile
     private String sampletype;
     private String samplenumber;
     private String sampledate;
-    private String study;
     private String country;
     private String hospital;
     private String region;
@@ -17,19 +16,16 @@ public class MatchedFile
     * @param sampletype
     * @param samplenumber
     * @param sampledate
-    * @param study
     * @param country
     * @param hospital
     * @param region
      */
-//public MatchedFile(String UID, String sampletype, String samplenumber, String sampledate, String study, String country, String hospital, String region)
-public MatchedFile(int UID, String sampletype, String samplenumber, String sampledate, String study, String country, String hospital, String region)
+public MatchedFile(int UID, String sampletype, String samplenumber, String sampledate, String country, String hospital, String region)
 {
     this.UID = UID;
     this.sampletype = sampletype;
     this.samplenumber = samplenumber;
     this.sampledate = sampledate;
-    this.study = study;
     this.country = country;
     this.hospital = hospital;
     this.region = region;
@@ -42,6 +38,7 @@ public int getUID()
 {
     return UID;
 }
+
 /**
  * get 
  * @return 
@@ -49,28 +46,27 @@ public int getUID()
 public String getsampleType()
 {
     return sampletype;
-}/**
+}
+
+/**
  * get 
  * @return 
  */
 public String getsampleNumber()
 {
     return samplenumber;
-}/**
+}
+
+/**
  * get 
  * @return 
  */
 public String getsampleDate()
 {
     return sampledate;
-}/**
- * get 
- * @return 
- */
-public String getStudy()
-{
-    return study;
-}/**
+}
+
+/**
  * get 
  * @return 
  */
@@ -78,6 +74,7 @@ public String getCountry()
 {
     return country;
 }
+
 /**
  * get hospital
  * @return

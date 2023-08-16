@@ -1,21 +1,21 @@
-
 /**
  Name: Add location to nopho exports
 @author: Henrik Vestin, Uppsala Biobank
 Date: 2021 05 31, v0.3 2022 03 01
 History: 	- 0.2 added the list of hospitals per region as a sub-method instead of having it in a separate file. Not neat but simpler to maintain if changes need to be done.
 			- 0.3 rewritten in java to hopefully speed things up. Reverted back to a separate hospital file so the users can maintain that list instead of contacting Biobank IT-support.
+            - 0.4 Exports no longer contained study-column and hospital, country of origin and region no longer have a leading "()". Code revised to reflect these changes.
             ToDo: progressbar or indicator if still necessary.
 
             Comment: Jira UBB-325, Script to add location column to FreezerPro data exports based on a simple
 		   list containing: Hospital, Country, Region
  */
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-//import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
-
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -42,7 +41,6 @@ public class RegionMatch
     private static String gFilePath;
     private static String SaveFilePath;
     private HashMap<String, MutableInt> storevalueIU;
-    //private PMonitor pm;
 
     // Main, needs to getset filepaths to source- and hosptial-file. 
     public static void main(String[] args) throws Exception
@@ -65,7 +63,6 @@ public class RegionMatch
         hospitalfiles = new HashMap<String,HospitalFile>();
         matchedfiles = new HashMap<Integer,MatchedFile>();
         storevalueIU = new HashMap<String, MutableInt>();
-        //pm = new PMonitor();
     }
 
     // Methods below
@@ -94,19 +91,19 @@ public class RegionMatch
                     }
                 else
                     {
-                    if(stl<7) //neater way would be catching the "ArrayIndexOutOfBoundsException"
+                    if(stl<6) //neater way would be catching the "ArrayIndexOutOfBoundsException"
                         {
-                            String[] tempStr = new String[7];
+                            String[] tempStr = new String[6];
                             System.arraycopy(str, 0, tempStr, 0, stl);
                             str = tempStr;
-                            for(int arrayExpand = stl; arrayExpand < 7; arrayExpand++)
+                            for(int arrayExpand = stl; arrayExpand < 6; arrayExpand++)
                             {
                                 str[arrayExpand] = "";
                             }
                         }
                     String strToint = str[0]; //grab UID string from array
                     int i = Integer.parseInt(strToint); //convert string to int
-                    SourceFile s = new SourceFile(i, str[1], str[2], str[3], str[4], str[5], str[6]);
+                    SourceFile s = new SourceFile(i, str[1], str[2], str[3], str[4], str[5]);
                     sourcefiles.putIfAbsent(i, s); //put values in hashmap with UID as key
                     }
             }
@@ -246,19 +243,19 @@ public class RegionMatch
         {
             SourceFile shospital = sourcefiles.get(iUID);
             String SFhospital = shospital.getHospital();
-            //Sttring UID = shospital.getUID();
             int UID = shospital.getUID();
             String sampletype = shospital.getsampleType();
             String samplenumber = shospital.getsampleNumber();
             String sampledate = shospital.getsampleDate();
-            String study = shospital.getStudy();
+            //String study = shospital.getStudy();
             String country = shospital.getCountry();
             String hospital = SFhospital;
             if(hospitalfiles.containsKey(SFhospital))
             {
                 HospitalFile r = hospitalfiles.get(SFhospital);
                 String region = r.getRegion();
-                MatchedFile matchedfile = new MatchedFile(UID, sampletype, samplenumber, sampledate, study, country, hospital, region);
+                //MatchedFile matchedfile = new MatchedFile(UID, sampletype, samplenumber, sampledate, study, country, hospital, region);
+                MatchedFile matchedfile = new MatchedFile(UID, sampletype, samplenumber, sampledate, country, hospital, region);
                 matchedfiles.put(UID, matchedfile);
                 yepp.increment();
                 return yepp;
@@ -267,7 +264,8 @@ public class RegionMatch
             else
             {
                 String region = "N/A";
-                MatchedFile matchedfile = new MatchedFile(UID, sampletype, samplenumber, sampledate, study, country, hospital, region);
+                //MatchedFile matchedfile = new MatchedFile(UID, sampletype, samplenumber, sampledate, study, country, hospital, region);
+                MatchedFile matchedfile = new MatchedFile(UID, sampletype, samplenumber, sampledate, country, hospital, region);
                 matchedfiles.put(UID, matchedfile);
                 nope.increment();
                 return nope;
@@ -277,19 +275,18 @@ public class RegionMatch
 
     public void MatchedFileContent() throws Exception
     {
-        String feedString = "UID;Sample Type;(NOPHO) Provnummer;() Provtagningsdatum;(NOPHO) Studie;() Country of Origin;() Hospital;()Region\n";
+        //String feedString = "UID;Sample Type;(NOPHO) Provnummer;() Provtagningsdatum;(NOPHO) Studie;() Country of Origin;() Hospital;()Region\n";
+        String feedString = "UID;Sample Type;(NOPHO) Provnummer;Provtagningsdatum;Country of Origin;Hospital;Region\n";
         writeToFile(SaveFilePath, feedString);
         TreeMap<Integer, MatchedFile> sorted = new TreeMap<>();
         sorted.putAll(matchedfiles);
-        //for(Entry<String, MatchedFile> muid:matchedfiles.entrySet())
         for(Entry<Integer, MatchedFile> muid:sorted.entrySet())
         {
             MatchedFile m = muid.getValue();
-            feedString = m.getUID()+";"+m.getsampleType()+";"+m.getsampleNumber()+";"+m.getsampleDate()+";"+m.getStudy()+";"+m.getCountry()+";"+m.getHospital()+";"+m.getRegion()+"\n";
+            feedString = m.getUID()+";"+m.getsampleType()+";"+m.getsampleNumber()+";"+m.getsampleDate()+";"+m.getCountry()+";"+m.getHospital()+";"+m.getRegion()+"\n";
             writeToFile(SaveFilePath, feedString);
         }
-        //System.out.println(storevalueIU.get("Matched") + " matches. " + storevalueIU.get("No match") + " unmatched.");
-        
+                
         String usermess = "Number of lines in export: " + sourcefiles.size() + "\n\n" + storevalueIU.get("Matched") + " matches. " + storevalueIU.get("No match") + " unmatched.";
         userMessage(usermess);
         return;
@@ -325,5 +322,4 @@ public class RegionMatch
  
 // End of file
 }
-
 
